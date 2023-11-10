@@ -3,6 +3,10 @@ import axios from 'axios'
 import './App.css';
 import { useState } from 'react';
 import YouTube from 'react-youtube';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUpLong } from '@fortawesome/free-solid-svg-icons';
+
+
 
 function App() {
   const API_URL = "https://api.themoviedb.org/3";
@@ -82,12 +86,13 @@ function App() {
 
   return (
     <div>
-      <h2 className="text-center mt-5 mb-5">Tráilers de Peliculas</h2>
+      <h2 className="titulo">Tráilers de Peliculas</h2>
       
       {/* el buscador */}
+      <br></br>
       <form className="container mb-4" onSubmit={searchMovies}>
-        <input type="text" placeholder="search" onChange={(e) => setSearchKey(e.target.value)}/>
-        <button className="btn btn-primary" style={{ marginLeft: '10px' }}>Search</button>
+        <input type="text" placeholder="Película" onChange={(e) => setSearchKey(e.target.value)}/>
+        <button className="btn btn-primary" style={{ marginLeft: '10px' }}>Buscar</button>
       </form>  
       
       {notFound && (
@@ -161,7 +166,15 @@ function App() {
           ))}
         </div>
       </div>
+      <div className="scroll-to-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+  <div className="up-arrow">
+    <FontAwesomeIcon icon={faUpLong} />
+  </div>
+</div>
+      
     </div>
+
+    
   );
 }
 
