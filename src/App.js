@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import axios from 'axios'
 import './App.css';
 import { useState } from 'react';
@@ -26,7 +26,7 @@ function App() {
 
 
   // funcion para realizar la peticion por get a la api
-  const fetchMovies = async (searchKey) => {
+  const fetchMoviesCallback = useCallback(async (searchKey) => {
     const type = searchKey ? "search" : "discover";
     const {
       data: { results },
@@ -35,18 +35,18 @@ function App() {
         api_key: API_KEY,
         query: searchKey,
       },
-    });
+    })
 
     setMovies(results);
     setMovie(results[0]);
 
     if (results.length) {
       await fetchMovie(results[0].id);
-      setNotFound(false); // Se encontraron resultados, así que establecemos notFound en false
+      setNotFound(false);
     } else {
-      setNotFound(true); // No se encontraron resultados, establecemos notFound en true
+      setNotFound(true);
     }
-  };
+  }, []);
 
   // funcion para la peticion de un solo objeto y mostrar en reproductor de videos
   const fetchMovie = async (id) => {
@@ -74,15 +74,20 @@ function App() {
   };
 
   // funcion para buscar peliculas
-  const searchMovies = (e) => {
+  const searchMovies = async (e, fetchMoviesCallback) => {
     e.preventDefault();
-    fetchMovies(searchKey)
+    await fetchMoviesCallback(searchKey);
   };
   
 
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    const fetchData = async () => {
+      await fetchMoviesCallback(); // Use fetchMoviesCallback here
+    };
+
+    fetchData();
+  }, [fetchMoviesCallback]);
+  
 
   return (
     <div>
@@ -90,7 +95,7 @@ function App() {
       
       {/* el buscador */}
       <br></br>
-      <form className="container mb-4" onSubmit={searchMovies}>
+      <form className="container mb-4" onSubmit={(e) => searchMovies(e, fetchMoviesCallback)}>
         <input type="text" placeholder="Película" onChange={(e) => setSearchKey(e.target.value)}/>
         <button className="btn btn-primary" style={{ marginLeft: '10px' }}>Buscar</button>
       </form>  
